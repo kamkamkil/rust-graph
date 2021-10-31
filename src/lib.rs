@@ -79,6 +79,18 @@ pub mod graph {
             }
         }
 
+        pub fn get_neighbors(&self, node: usize) -> Option<Vec<usize>>
+        {
+            if node > self.get_nodes_amount(){
+                return None;
+            }
+            let mut result = Vec::new();
+            for(i,_) in self.versicles[node].iter().filter_map(|x| x.as_ref()).enumerate(){
+                result.push(i)
+            }
+            Some(result)
+        }
+
         pub fn new() -> Self {
             Graph {
                 versicles: Vec::new(),
