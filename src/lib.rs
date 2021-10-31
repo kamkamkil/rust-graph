@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 pub mod graph {
+    use std::{fmt::Display, fs::File, io::Write};
+
 
     pub(crate) struct Graph<V, N> {
         versicles: Vec<Vec<Option<V>>>,
@@ -84,7 +86,21 @@ pub mod graph {
                 versicles_amount: 0,
             }
         }
-
+    }
+    impl <V : Display, N: Display > Graph<V,N>{
+        
+        pub fn to_dot(&self,file_name: &str) -> std::io::Result<()>{
+            let mut file = File::create(file_name)?;
+            file.write_all(b"digraph g{ \n")?;
+            for (i,v) in self.versicles.iter().enumerate()
+            {
+                for (p,n) in v.iter().filter_map(|x| x.as_ref()).enumerate(){
+                    file.write_all(format!("{} -> {} [label = {}] \n",self.nodes[i],self.nodes[p],n).as_bytes())?;
+                }
+            }
+            file.write_all(b"}\n")?;
+            Ok(())
+        }
     }
 }
 

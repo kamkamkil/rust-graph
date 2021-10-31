@@ -62,4 +62,21 @@ mod graph_tests{
         assert_eq!(g.get_ver_value(0, 1),&None);
         assert_eq!(g.delate_versicles(11, 11),Err("node number out of range"));
     }
+
+    // #[test]
+    // fn generate_dot_file(){
+    //     let mut g: Graph<i32, i32> = Graph::new();
+    //     for i in 0..5 {
+    //         g.add_node(i);
+    //     }
+    //     g.add_ver(0, 1, 1);
+    //     g.add_ver(0, 2, 1);
+    //     g.add_ver(0, 3, 1);
+    //     g.add_ver(0, 4, 1);
+    //     g.add_ver(1, 2, 1);
+    //     g.add_ver(3, 1, 1);
+    //     g.add_ver(4, 3, 1);
+
+    //     g.to_dot("file_name.txt");
+    // }
 }
