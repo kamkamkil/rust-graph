@@ -107,6 +107,9 @@ pub mod graph {
         pub fn bfs_iter(&self,node: usize) -> graph_iterators::BFSIter<V, N> {
             graph_iterators::BFSIter::new(&self, node).into_iter()
         }
+        pub fn dfs_iter(&self,node: usize) -> graph_iterators::DFSIter<V, N> {
+            graph_iterators::DFSIter::new(&self, node).into_iter()
+        }
     }
     // TODO extract to another file 
     impl <V : Display + Clone, N: Display > Graph<V,N>{

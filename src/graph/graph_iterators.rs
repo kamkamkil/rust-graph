@@ -1,6 +1,11 @@
 use std::collections::VecDeque;
 
 use crate::graph::Graph;
+
+pub trait GetNodeNumber {
+    fn get_node_number(&self) -> Option<&usize>;
+}
+
 pub(crate) struct BFSIter<'a, V, N> {
     graph: &'a Graph<V, N>,
     queue: VecDeque<usize>,
@@ -38,14 +43,20 @@ impl<'a, V: Clone, N> Iterator for BFSIter<'a, V, N> {
     }
 }
 
-struct DFSIter<'a, V, N> {
+impl<'a, V: Clone, N> GetNodeNumber for BFSIter<'a, V, N>
+{
+    fn get_node_number(&self) -> Option<&usize> {
+        self.queue.back()
+    }
+}
+pub(crate) struct DFSIter<'a, V, N> {
     graph: &'a Graph<V, N>,
     stack: VecDeque<usize>,
     unvisited: Vec<bool>,
 }
 
 impl<'a, V : Clone, N> DFSIter<'a, V, N> {
-    fn new(graph: &'a Graph<V, N>, start: usize) -> Self {
+    pub fn new(graph: &'a Graph<V, N>, start: usize) -> Self {
         let mut new_one = Self {
             graph,
             stack : VecDeque::new(),
@@ -60,7 +71,7 @@ impl<'a, V: Clone, N> Iterator for DFSIter<'a, V, N> {
     type Item = &'a N;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.stack.pop_back() {
+        match self.stack.pop_front() {
             None => None,
             Some(x) => {
                 self.unvisited[x] = false;
@@ -72,5 +83,12 @@ impl<'a, V: Clone, N> Iterator for DFSIter<'a, V, N> {
                 Some(self.graph.get_node_value(x)?)
             }
         }
+    }
+}
+
+impl<'a, V: Clone, N> GetNodeNumber for DFSIter<'a, V, N>
+{
+    fn get_node_number(&self) -> Option<&usize> {
+        self.stack.front()
     }
 }
