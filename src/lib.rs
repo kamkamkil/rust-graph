@@ -1,5 +1,8 @@
 #![allow(dead_code)]
 pub mod graph {
+    pub mod graph_iterators;
+
+
     use std::{fmt::Display, fs::File, io::Write};
 
 
@@ -63,7 +66,7 @@ pub mod graph {
             self.versicles_amount
         }
         //TODO dodać tutaj mutowalne wartości 
-        pub fn get_ver_value(&mut self, n1: usize, n2: usize) -> &Option<V> {
+        pub fn get_ver_value(&self, n1: usize, n2: usize) -> &Option<V> {
             if n1 < self.nodes.len() && n2 < self.nodes.len() {
                 &self.versicles[n1][n2]
             } else {
@@ -85,8 +88,11 @@ pub mod graph {
                 return None;
             }
             let mut result = Vec::new();
-            for(i,_) in self.versicles[node].iter().filter_map(|x| x.as_ref()).enumerate(){
-                result.push(i)
+            
+            for i  in 0 .. self.get_nodes_amount() {
+                if let Some(_) = self.get_ver_value(node,i){
+                    result.push(i);
+                }
             }
             Some(result)
         }
@@ -98,22 +104,26 @@ pub mod graph {
                 versicles_amount: 0,
             }
         }
+        pub fn bfs_iter(&self,node: usize) -> graph_iterators::BFSIter<V, N> {
+            graph_iterators::BFSIter::new(&self, node).into_iter()
+        }
     }
-    impl <V : Display, N: Display > Graph<V,N>{
+    // TODO extract to another file 
+    impl <V : Display + Clone, N: Display > Graph<V,N>{
         
         pub fn to_dot(&self,file_name: &str) -> std::io::Result<()>{
             let mut file = File::create(file_name)?;
             file.write_all(b"digraph g{ \n")?;
-            for (i,v) in self.versicles.iter().enumerate()
-            {
-                for (p,n) in v.iter().filter_map(|x| x.as_ref()).enumerate(){
-                    file.write_all(format!("{} -> {} [label = {}] \n",self.nodes[i],self.nodes[p],n).as_bytes())?;
+            for node in 0..self.get_nodes_amount(){
+                for n in self.get_neighbors(node).unwrap(){
+                    file.write_all(format!("{} -> {} [label = {}] \n",node,n,self.get_ver_value(node, n).as_ref().unwrap()).as_bytes())?;
                 }
             }
             file.write_all(b"}\n")?;
             Ok(())
         }
     }
+    // use graph_iterators;
 }
 
 
