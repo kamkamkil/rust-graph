@@ -111,22 +111,7 @@ pub mod graph {
             graph_iterators::DFSIter::new(&self, node).into_iter()
         }
     }
-    // TODO extract to another file 
-    impl <V : Display + Clone, N: Display > Graph<V,N>{
-        
-        pub fn to_dot(&self,file_name: &str) -> std::io::Result<()>{
-            let mut file = File::create(file_name)?;
-            file.write_all(b"digraph g{ \n")?;
-            for node in 0..self.get_nodes_amount(){
-                for n in self.get_neighbors(node).unwrap(){
-                    file.write_all(format!("{} -> {} [label = {}] \n",node,n,self.get_ver_value(node, n).as_ref().unwrap()).as_bytes())?;
-                }
-            }
-            file.write_all(b"}\n")?;
-            Ok(())
-        }
-    }
-    // use graph_iterators;
+    mod to_dot;
 }
 
 
