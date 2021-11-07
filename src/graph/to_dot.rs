@@ -2,7 +2,8 @@ use std::{fmt::Display, fs::File, io::Write};
 
 use super::Graph;
 
-enum Color {
+#[derive(Clone, Copy)]
+pub enum Color {
     White,
     Red,
     Blue,
@@ -23,7 +24,8 @@ impl Display for Color {
     }
 }
 
-enum NodeShape {
+#[derive(Clone, Copy)]
+pub enum NodeShape {
     Ellipse,
     Box,
     Circle,
@@ -48,15 +50,15 @@ impl Display for NodeShape {
         }
     }
 }
-
+#[derive(Clone, Copy)]
 pub struct NodeRule {
-    color: Color,
-    fill_color: Color,
-    label: bool,
-    shape: NodeShape,
+    pub color: Color,
+    pub fill_color: Color,
+    pub label: bool,
+    pub shape: NodeShape,
 }
-
-enum VersicleStyle {
+#[derive(Clone, Copy)]
+pub enum VersicleStyle {
     Box,
     Crow,
     Curve,
@@ -87,11 +89,31 @@ impl Display for VersicleStyle {
         }
     }
 }
-
+#[derive(Clone, Copy)]
 pub struct VersicleRule {
-    color: Color,
-    label: bool,
-    style: VersicleStyle,
+    pub color: Color,
+    pub label: bool,
+    pub style: VersicleStyle,
+}
+///! takes ownership of path
+pub fn color_path_node(path: Vec<usize>, node_rule: NodeRule) -> impl Fn(usize) -> NodeRule {
+    move |n: usize| {
+        if path.contains(&n) {
+            node_rule
+        } else {
+            default_node_rule(n)
+        }
+    }
+}
+
+pub fn color_path_versicle(path: Vec<(usize,usize)>,versicle_rule: VersicleRule)-> impl Fn(usize,usize) -> VersicleRule{
+    move |n1:usize,n2:usize|{
+        if path.contains(&(n1,n2)) {
+            versicle_rule
+        } else {
+            default_versicle_rule(n1,n2)
+        }
+    }
 }
 
 pub fn default_node_rule(_node: usize) -> NodeRule {
@@ -115,12 +137,13 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
     pub(crate) fn to_dot(&self, file_name: &str) -> std::io::Result<()> {
         self.to_dot_with_rules(file_name, default_node_rule, default_versicle_rule)
     }
-
+// expected fn pointer `fn(usize) -> NodeRule`
+// found opaque type `impl Fn<(usize,)>`
     pub(crate) fn to_dot_with_rules(
         &self,
         file_name: &str,
-        node_rule: fn(usize) -> NodeRule,
-        versicle_rule: fn(usize, usize) -> VersicleRule,
+        node_rule: impl Fn(usize) -> NodeRule,
+        versicle_rule: impl Fn(usize,usize) -> VersicleRule,
     ) -> std::io::Result<()> {
         let mut file = File::create(file_name)?;
         file.write_all(b"digraph g{ \n")?;
@@ -129,13 +152,16 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
 
         for node in 0..self.get_nodes_amount() {
             for n in self.get_neighbors(node).unwrap() {
-                let rule = versicle_rule(node,n);
+                let rule = versicle_rule(node, n);
                 file.write_all(format!("{} -> {} [", node, n,).as_bytes())?;
                 if rule.label {
-                    file.write_all(format!("label = {} ",self.get_ver_value(node, n).as_ref().unwrap()).as_bytes())?;
+                    file.write_all(
+                        format!("label = {} ", self.get_ver_value(node, n).as_ref().unwrap())
+                            .as_bytes(),
+                    )?;
                 }
-                file.write_all(format!("color = {} ",rule.color).as_bytes())?;
-                file.write_all(format!("arrowhead = {} ]\n",rule.style).as_bytes())?;
+                file.write_all(format!("color = {} ", rule.color).as_bytes())?;
+                file.write_all(format!("arrowhead = {} ]\n", rule.style).as_bytes())?;
             }
         }
         file.write_all(b"}\n")?;
@@ -144,7 +170,7 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
 
     fn format_node(
         &self,
-        node_rule: fn(usize) -> NodeRule,
+        node_rule: impl Fn(usize) -> NodeRule,
         file: &mut File,
     ) -> Result<(), std::io::Error> {
         Ok(for node in 0..self.get_nodes_amount() {
