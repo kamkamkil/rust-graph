@@ -3,7 +3,6 @@ pub mod graph {
     pub mod graph_iterators;
 
 
-    use std::{fmt::Display, fs::File, io::Write};
 
 
     pub(crate) struct Graph<V, N> {
@@ -111,10 +110,10 @@ pub mod graph {
             graph_iterators::DFSIter::new(&self, node).into_iter()
         }
     }
-    mod to_dot;
+    pub mod to_dot;
 }
 
-
+pub mod graph_algorithms; 
 
 #[cfg(test)]
 mod graph_tests ;
