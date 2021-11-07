@@ -57,6 +57,17 @@ pub struct NodeRule {
     pub label: bool,
     pub shape: NodeShape,
 }
+
+impl Default for NodeRule {
+    fn default() -> Self {
+        Self {
+            color: Color::Black,
+            fill_color: Color::White,
+            label: true,
+            shape: NodeShape::Ellipse,
+        }
+    }
+}
 #[derive(Clone, Copy)]
 pub enum VersicleStyle {
     Box,
@@ -95,6 +106,16 @@ pub struct VersicleRule {
     pub label: bool,
     pub style: VersicleStyle,
 }
+
+impl Default for VersicleRule {
+    fn default() -> Self {
+        Self {
+            color: Color::Black,
+            label: true,
+            style: VersicleStyle::Normal,
+        }
+    }
+}
 ///! takes ownership of path
 pub fn color_path_node(path: Vec<usize>, node_rule: NodeRule) -> impl Fn(usize) -> NodeRule {
     move |n: usize| {
@@ -106,12 +127,15 @@ pub fn color_path_node(path: Vec<usize>, node_rule: NodeRule) -> impl Fn(usize) 
     }
 }
 
-pub fn color_path_versicle(path: Vec<(usize,usize)>,versicle_rule: VersicleRule)-> impl Fn(usize,usize) -> VersicleRule{
-    move |n1:usize,n2:usize|{
-        if path.contains(&(n1,n2)) {
+pub fn color_path_versicle(
+    path: Vec<(usize, usize)>,
+    versicle_rule: VersicleRule,
+) -> impl Fn(usize, usize) -> VersicleRule {
+    move |n1: usize, n2: usize| {
+        if path.contains(&(n1, n2)) {
             versicle_rule
         } else {
-            default_versicle_rule(n1,n2)
+            default_versicle_rule(n1, n2)
         }
     }
 }
@@ -137,13 +161,13 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
     pub(crate) fn to_dot(&self, file_name: &str) -> std::io::Result<()> {
         self.to_dot_with_rules(file_name, default_node_rule, default_versicle_rule)
     }
-// expected fn pointer `fn(usize) -> NodeRule`
-// found opaque type `impl Fn<(usize,)>`
+    // expected fn pointer `fn(usize) -> NodeRule`
+    // found opaque type `impl Fn<(usize,)>`
     pub(crate) fn to_dot_with_rules(
         &self,
         file_name: &str,
         node_rule: impl Fn(usize) -> NodeRule,
-        versicle_rule: impl Fn(usize,usize) -> VersicleRule,
+        versicle_rule: impl Fn(usize, usize) -> VersicleRule,
     ) -> std::io::Result<()> {
         let mut file = File::create(file_name)?;
         file.write_all(b"digraph g{ \n")?;
