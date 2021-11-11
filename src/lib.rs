@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 pub mod graph {
+    use std::iter;
+
     pub mod graph_iterators;
 
 
@@ -11,10 +13,10 @@ pub mod graph {
         versicles_amount: usize,
     }
 
-    impl<V: Clone, N> Graph<V, N> {
+    impl<V, N> Graph<V, N> {
         pub fn add_node(&mut self, data: N) -> usize {
             self.nodes.push(data);
-            self.versicles.push(vec![None; self.nodes.len() - 1]);
+            self.versicles.push(iter::repeat_with(|| None).take(self.nodes.len() - 1).collect::<Vec<_>>());
             for v in &mut self.versicles {
                 v.push(None);
             }

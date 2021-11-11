@@ -7,8 +7,8 @@ pub(crate) fn dijkstra<V: Clone, N>(
     dys_func: impl Fn(&V) -> usize,
 ) -> Option<(usize, Vec<usize>)> {
     let mut distance = vec![usize::MAX; graph.get_nodes_amount()];
-    distance[start] = 0 as usize;
-    let mut prev = vec![None as Option<usize>; graph.get_nodes_amount()];
+    distance[start] = 0;
+    let mut prev = vec![None; graph.get_nodes_amount()];
     let mut unvisited = vec![true; graph.get_nodes_amount()];
     let mut current = start;
     loop {
@@ -39,18 +39,15 @@ pub(crate) fn dijkstra<V: Clone, N>(
         }
         current = new_one;
     }
-    let mut result: Vec<usize> = Vec::new();
+    let mut result = Vec::new();
 
     let mut current = end;
     result.push(current);
     while current != start {
-        match prev[current] {
-            Some(node) => {
+        let node = prev[current]?; 
                 result.push(node);
                 current = node
-            }
-            None => return None,
-        }
+        
     }
     result.reverse();
     Some((distance[end], result))

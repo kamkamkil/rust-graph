@@ -12,7 +12,7 @@ pub(crate) struct BFSIter<'a, V, N> {
     unvisited: Vec<bool>,
 }
 
-impl<'a, V: Clone, N> BFSIter<'a, V, N> {
+impl<'a, V, N> BFSIter<'a, V, N> {
     pub fn new(graph: &'a Graph<V, N>, start: usize) -> Self {
         let mut new = Self {
             graph,
@@ -24,7 +24,7 @@ impl<'a, V: Clone, N> BFSIter<'a, V, N> {
     }
 }
 // temporary unsafe
-impl<'a, V: Clone, N> Iterator for BFSIter<'a, V, N> {
+impl<'a, V, N> Iterator for BFSIter<'a, V, N> {
     type Item = &'a N;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -55,7 +55,7 @@ pub(crate) struct DFSIter<'a, V, N> {
     unvisited: Vec<bool>,
 }
 
-impl<'a, V : Clone, N> DFSIter<'a, V, N> {
+impl<'a, V, N> DFSIter<'a, V, N> {
     pub fn new(graph: &'a Graph<V, N>, start: usize) -> Self {
         let mut new_one = Self {
             graph,
@@ -67,7 +67,7 @@ impl<'a, V : Clone, N> DFSIter<'a, V, N> {
     }
 }
 
-impl<'a, V: Clone, N> Iterator for DFSIter<'a, V, N> {
+impl<'a, V, N> Iterator for DFSIter<'a, V, N> {
     type Item = &'a N;
 
     fn next(&mut self) -> Option<Self::Item> {
