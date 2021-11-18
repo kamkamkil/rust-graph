@@ -1,4 +1,4 @@
-use crate::graph::Graph;
+use crate::{grap, graph::Graph};
 
 #[test]
 fn adding_nodes_works() {
@@ -60,4 +60,14 @@ fn removing_ver_works() {
     assert_eq!(g.delate_versicles(0, 1), Err("trying to delate non-existing verticle"));
     assert_eq!(g.get_ver_value(0, 1),&None);
     assert_eq!(g.delate_versicles(11, 11),Err("node number out of range"));
+}
+
+#[test]
+fn macro_test(){
+    let g : Graph<i32,i32> = grap!(0,1,2,3,4;(0,1,0),(1,2,3));
+    for i in 0..5{
+        assert_eq!(g.get_node_value(i),Some(&(i as i32)));
+    }
+    assert_eq!(g.get_ver_value(0, 1),&Some(0));
+    assert_eq!(g.get_ver_value(1, 2),&Some(3));
 }
