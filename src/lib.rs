@@ -13,6 +13,28 @@ pub mod graph {
         versicles_amount: usize,
     }
 
+
+    /// macro doesn't check if verisicles are correctly set  
+    ///
+    #[macro_export]
+    macro_rules! grap{
+        ($($node:expr),* ; $(($ver1:expr,$ver2:expr,$data:expr)),*)=>
+    {{
+        let mut g : Graph<_,_>= Graph::new();
+        $(
+            let node = $node;
+            g.add_node(node);
+        )*
+        $(
+            let ver1 = $ver1;
+            let ver2 = $ver2;
+            let data = $data;
+            g.add_ver(ver1,ver2,data);
+        )*
+        g
+    }}
+    }
+
     impl<V, N> Graph<V, N> {
         pub fn add_node(&mut self, data: N) -> usize {
             self.nodes.push(data);
