@@ -1,6 +1,6 @@
 use crate::graph as g;
 
-pub(crate) fn dijkstra<V: Clone, N>(
+pub(crate) fn dijkstra<V, N>(
     graph: &g::Graph<V, N>,
     start: usize,
     end: usize,
