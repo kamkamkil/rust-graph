@@ -38,7 +38,11 @@ pub mod graph {
     impl<V, N> Graph<V, N> {
         pub fn add_node(&mut self, data: N) -> usize {
             self.nodes.push(data);
-            self.versicles.push(iter::repeat_with(|| None).take(self.nodes.len() - 1).collect::<Vec<_>>());
+            self.versicles.push(
+                iter::repeat_with(|| None)
+                    .take(self.nodes.len() - 1)
+                    .collect::<Vec<_>>(),
+            );
             for v in &mut self.versicles {
                 v.push(None);
             }
