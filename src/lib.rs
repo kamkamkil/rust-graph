@@ -4,9 +4,6 @@ pub mod graph {
 
     pub mod graph_iterators;
 
-
-
-
     pub(crate) struct Graph<V, N> {
         versicles: Vec<Vec<Option<V>>>,
         nodes: Vec<N>,
@@ -83,7 +80,7 @@ pub mod graph {
             } else {
                 Err("node number out of range")
             }
-        } 
+        }
 
         pub fn get_nodes_amount(&self) -> usize {
             self.nodes.len()
@@ -92,7 +89,6 @@ pub mod graph {
         pub fn get_versicles_amount(&self) -> usize {
             self.versicles_amount
         }
-        //TODO dodać tutaj mutowalne wartości 
         pub fn get_ver_value(&self, n1: usize, n2: usize) -> &Option<V> {
             if n1 < self.nodes.len() && n2 < self.nodes.len() {
                 &self.versicles[n1][n2]
@@ -109,15 +105,14 @@ pub mod graph {
             }
         }
 
-        pub fn get_neighbors(&self, node: usize) -> Option<Vec<usize>>
-        {
-            if node > self.get_nodes_amount(){
+        pub fn get_neighbors(&self, node: usize) -> Option<Vec<usize>> {
+            if node > self.get_nodes_amount() {
                 return None;
             }
             let mut result = Vec::new();
-            
-            for i  in 0 .. self.get_nodes_amount() {
-                if let Some(_) = self.get_ver_value(node,i){
+
+            for i in 0..self.get_nodes_amount() {
+                if let Some(_) = self.get_ver_value(node, i) {
                     result.push(i);
                 }
             }
@@ -131,17 +126,17 @@ pub mod graph {
                 versicles_amount: 0,
             }
         }
-        pub fn bfs_iter(&self,node: usize) -> graph_iterators::BFSIter<V, N> {
+        pub fn bfs_iter(&self, node: usize) -> graph_iterators::BFSIter<V, N> {
             graph_iterators::BFSIter::new(&self, node).into_iter()
         }
-        pub fn dfs_iter(&self,node: usize) -> graph_iterators::DFSIter<V, N> {
+        pub fn dfs_iter(&self, node: usize) -> graph_iterators::DFSIter<V, N> {
             graph_iterators::DFSIter::new(&self, node).into_iter()
         }
     }
     pub mod to_dot;
 }
 
-pub mod graph_algorithms; 
+pub mod graph_algorithms;
 
 #[cfg(test)]
-mod graph_tests ;
+mod graph_tests;
