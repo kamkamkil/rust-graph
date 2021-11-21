@@ -76,7 +76,17 @@ mod find_all_cycles_test {
         let res = find_all_cycles(&g);
         match res {
             Some(r) => assert_eq!(r[0], [0, 1, 2, 3, 4].to_vec()),
-            None => assert!(false),
+            None => assert!(false,"no path was found but there should be one \n"),
+        }
+    }
+
+    #[test]
+    fn multiple_cycles(){
+        let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0),(2,0,0));
+        let res = find_all_cycles(&g);
+        match res {
+            Some(r) => assert_eq!(r, [[0, 1, 2].to_vec(), [0, 1, 2, 3, 4].to_vec()] .to_vec()),
+            None => assert!(false,"no path was found but there should be one \n"),
         }
     }
 }

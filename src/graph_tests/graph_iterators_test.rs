@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod bfs_iter_test {
-    use crate::graph::to_dot;
     use crate::graph::Graph;
     #[test]
     fn basic_test() {

@@ -23,6 +23,7 @@ impl<'a, V, N> BFSIter<'a, V, N> {
         new
     }
 }
+
 // temporary unsafe
 impl<'a, V, N> Iterator for BFSIter<'a, V, N> {
     type Item = &'a N;
