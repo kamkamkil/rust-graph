@@ -1,10 +1,12 @@
 #![allow(dead_code)]
 pub mod graph {
+    //! implementation of graph data struct based on association matrix 
+
+
     use std::iter;
 
     pub mod graph_iterators;
-
-    pub(crate) struct Graph<V, N> {
+    pub struct Graph<V, N> {
         versicles: Vec<Vec<Option<V>>>,
         nodes: Vec<N>,
         versicles_amount: usize,
@@ -33,6 +35,23 @@ pub mod graph {
     }
 
     impl<V, N> Graph<V, N> {
+
+        /// add node to graph 
+        /// 
+        /// # Arguments 
+        /// 
+        /// * `data` - data that node will hold 
+        /// 
+        /// # return 
+        /// 
+        /// * usize - number of your new node 
+        /// 
+        /// # Example
+        /// 
+        // / ```rust 
+        // / let mut g : Graph<usize, usize> = Graph::new();
+        // / assert_eq (g.add_node(1),0);
+        // / ```
         pub fn add_node(&mut self, data: N) -> usize {
             self.nodes.push(data);
             self.versicles.push(
@@ -45,16 +64,42 @@ pub mod graph {
             }
             self.nodes.len() - 1
         }
-        pub fn add_ver(&mut self, n1: usize, n2: usize, data: V) -> Result<(), &str> {
-            if n1 < self.nodes.len() && n2 < self.nodes.len() {
+
+        /// adds vericles to graph 
+        /// 
+        /// # arguments 
+        /// 
+        /// * node1, node 2 - nodes between which new versicle will be created
+        /// 
+        /// * data - data which will be saved on new versicle 
+        /// 
+        /// # returns
+        /// 
+        /// * Ok(()) if everything is fine 
+        /// 
+        /// * Err("node number out of range") if any node is out of range 
+        /// 
+        pub fn add_ver(&mut self, node1: usize, node2: usize, data: V) -> Result<(), &str> {
+            if node1 < self.nodes.len() && node2 < self.nodes.len() {
                 self.versicles_amount += 1;
-                self.versicles[n1][n2] = Some(data);
+                self.versicles[node1][node2] = Some(data);
                 Ok(())
             } else {
                 Err("node number out of range")
             }
         }
 
+        /// delate node and all versicles going in and out of it 
+        /// 
+        /// # arguments 
+        /// 
+        /// * node - node that will be deleted  
+        /// 
+        /// # return 
+        /// 
+        /// * OK(()) if everything is fine 
+        /// 
+        /// * Err("node number out of range") if any node is out of range 
         pub fn delate_node(&mut self, node: usize) -> Result<(), &str> {
             if node > self.nodes.len() {
                 Err("node number out of range")
@@ -68,12 +113,25 @@ pub mod graph {
             }
         }
 
-        pub fn delate_versicles(&mut self, n1: usize, n2: usize) -> Result<(), &str> {
-            if n1 < self.nodes.len() && n2 < self.nodes.len() {
-                match self.versicles[n1][n2] {
+        /// delate versicle 
+        /// 
+        /// # arguments
+        /// 
+        /// * node1,node2 - nodes between which  versicle will be deleted
+        /// 
+        /// # return 
+        /// 
+        /// * OK(()) if everything is fine 
+        /// 
+        /// * Err("node number out of range") if any node is out of range 
+        /// 
+        /// * Err("trying to delate non-existing verticle") if non existing versicles is being deleted 
+        pub fn delate_versicles(&mut self, node1: usize, node2: usize) -> Result<(), &str> {
+            if node1 < self.nodes.len() && node2 < self.nodes.len() {
+                match self.versicles[node1][node2] {
                     None => Err("trying to delate non-existing verticle"),
                     _ => {
-                        self.versicles[n1][n2] = None;
+                        self.versicles[node1][node2] = None;
                         Ok(())
                     }
                 }
@@ -82,10 +140,12 @@ pub mod graph {
             }
         }
 
+        /// returns amount of nodes 
         pub fn get_nodes_amount(&self) -> usize {
             self.nodes.len()
         }
 
+        /// returns amount of versicles 
         pub fn get_versicles_amount(&self) -> usize {
             self.versicles_amount
         }
@@ -97,6 +157,7 @@ pub mod graph {
             }
         }
 
+        /// return value of passed code
         pub fn get_node_value(&self, node: usize) -> Option<&N> {
             if node < self.nodes.len() {
                 return Some(&self.nodes[node]);
@@ -105,6 +166,7 @@ pub mod graph {
             }
         }
 
+        /// return vector of nodes which are neighbors of given node 
         pub fn get_neighbors(&self, node: usize) -> Option<Vec<usize>> {
             if node > self.get_nodes_amount() {
                 return None;
@@ -126,9 +188,13 @@ pub mod graph {
                 versicles_amount: 0,
             }
         }
+
+        /// returns bfs iterator starting from given node 
         pub fn bfs_iter(&self, node: usize) -> graph_iterators::BFSIter<V, N> {
             graph_iterators::BFSIter::new(&self, node).into_iter()
         }
+
+        /// returns dfs iterator starting from given node
         pub fn dfs_iter(&self, node: usize) -> graph_iterators::DFSIter<V, N> {
             graph_iterators::DFSIter::new(&self, node).into_iter()
         }

@@ -6,7 +6,7 @@ pub trait GetNodeNumber {
     fn get_node_number(&self) -> Option<&usize>;
 }
 
-pub(crate) struct BFSIter<'a, V, N> {
+pub struct BFSIter<'a, V, N> {
     graph: &'a Graph<V, N>,
     queue: VecDeque<usize>,
     unvisited: Vec<bool>,
@@ -49,7 +49,7 @@ impl<'a, V: Clone, N> GetNodeNumber for BFSIter<'a, V, N>
         self.queue.back()
     }
 }
-pub(crate) struct DFSIter<'a, V, N> {
+pub struct DFSIter<'a, V, N> {
     graph: &'a Graph<V, N>,
     stack: VecDeque<usize>,
     unvisited: Vec<bool>,

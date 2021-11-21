@@ -59,3 +59,24 @@ mod dijkstra_test {
         );
     }
 }
+mod find_all_cycles_test {
+    use crate::grap;
+    use crate::graph::Graph;
+    use crate::graph_algorithms::find_all_cycles;
+
+    #[test]
+    fn none_cycles() {
+        let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,1),(3,4,3));
+        assert_eq!(find_all_cycles(&g), None);
+    }
+
+    #[test]
+    fn single_cycle() {
+        let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0));
+        let res = find_all_cycles(&g);
+        match res {
+            Some(r) => assert_eq!(r[0], [0, 1, 2, 3, 4].to_vec()),
+            None => assert!(false),
+        }
+    }
+}

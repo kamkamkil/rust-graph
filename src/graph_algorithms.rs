@@ -1,6 +1,20 @@
 use crate::graph as g;
 
-pub(crate) fn dijkstra<V, N>(
+
+/// find shortest path using dijkstra method
+/// 
+/// # arguments 
+/// 
+/// * start - starting node 
+/// 
+/// * end - ending node 
+/// 
+/// * dys_func - function which take versicle and return `usize` distance 
+/// 
+/// # returns 
+/// 
+/// it returns tuple of distance and vec of nodes (shortest path) or `None`    
+pub fn dijkstra<V, N>(
     graph: &g::Graph<V, N>,
     start: usize,
     end: usize,
@@ -44,11 +58,15 @@ pub(crate) fn dijkstra<V, N>(
     let mut current = end;
     result.push(current);
     while current != start {
-        let node = prev[current]?; 
-                result.push(node);
-                current = node
-        
+        let node = prev[current]?;
+        result.push(node);
+        current = node
     }
     result.reverse();
     Some((distance[end], result))
+}
+
+pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> {
+    
+    None
 }
