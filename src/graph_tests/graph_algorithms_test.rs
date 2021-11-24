@@ -124,7 +124,7 @@ mod find_all_cycles_test {
             [2, 3, 4, 5, 6].to_vec(),
         ]
         .to_vec();
-        for r in  &res{
+        for r in &res {
             let mut test = false;
             for c in &mut corr {
                 if let Ok(_) = vec_mach_after_rotation(&r, c) {
@@ -137,5 +137,15 @@ mod find_all_cycles_test {
             assert!(test, "cykle {:?} should not be found", r);
         }
         assert!(res.len() == corr.len());
+    }
+    #[test]
+    fn backtrace_cycle() {
+        let g = grap!(0,1,2,3,4;(1,0,0),(1,2,0),(2,3,0),(3,1,0),(0,4,0));
+        let res = find_all_cycles(&g);
+        let mut corr: Vec<usize> = [1,2,3].to_vec();
+        match res {
+            Some(r) => assert_eq!(vec_mach_after_rotation(&r[0],&mut corr),Ok(())),
+            None => assert!(false, "no path was found but there should be one \n"),
+        }
     }
 }
