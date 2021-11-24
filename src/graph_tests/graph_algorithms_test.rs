@@ -64,6 +64,22 @@ mod find_all_cycles_test {
     use crate::graph::Graph;
     use crate::graph_algorithms::find_all_cycles;
 
+    fn vec_mach_after_rotation<T: std::cmp::PartialEq>(
+        result: &Vec<T>,
+        correct: &mut Vec<T>,
+    ) -> Result<(), String> {
+        if result.len() != correct.len() {
+            return Err("String lengh doesn't match".to_string());
+        }
+        for _ in 0..result.len() {
+            if correct == result {
+                return Ok(());
+            } else {
+                correct.rotate_right(1);
+            }
+        }
+        Err("vec Doesn't match".to_string())
+    }
     #[test]
     fn none_cycles() {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,1),(3,4,3));
@@ -76,17 +92,50 @@ mod find_all_cycles_test {
         let res = find_all_cycles(&g);
         match res {
             Some(r) => assert_eq!(r[0], [0, 1, 2, 3, 4].to_vec()),
-            None => assert!(false,"no path was found but there should be one \n"),
+            None => assert!(false, "no path was found but there should be one \n"),
         }
     }
 
     #[test]
-    fn multiple_cycles(){
+    fn two_cycles() {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0),(2,0,0));
         let res = find_all_cycles(&g);
         match res {
-            Some(r) => assert_eq!(r, [[0, 1, 2].to_vec(), [0, 1, 2, 3, 4].to_vec()] .to_vec()),
-            None => assert!(false,"no path was found but there should be one \n"),
+            Some(r) => assert_eq!(r, [[0, 1, 2].to_vec(), [0, 1, 2, 3, 4].to_vec()].to_vec()),
+            None => assert!(false, "no path was found but there should be one \n"),
         }
+    }
+    #[test]
+    fn multiple_cycles() {
+        let g = grap!(0,1,2,3,4,5,6;
+                                   (0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,5,0),(5,0,0),(6,2,0),(6,0,0),(6,1,0),(4,6,0),(5,6,0),(3,6,0));
+        let res = find_all_cycles(&g).unwrap();
+        // g.to_dot("file_name.dot");
+        let mut corr: Vec<Vec<usize>> = [
+            [0, 1, 2, 3, 6].to_vec(),
+            [1, 2, 3, 6].to_vec(),
+            [2, 3, 6].to_vec(),
+            [0, 1, 2, 3, 4, 6].to_vec(),
+            [1, 2, 3, 4, 6].to_vec(),
+            [2, 3, 4, 6].to_vec(),
+            [0, 1, 2, 3, 4, 5].to_vec(),
+            [0, 1, 2, 3, 4, 5, 6].to_vec(),
+            [1, 2, 3, 4, 5, 6].to_vec(),
+            [2, 3, 4, 5, 6].to_vec(),
+        ]
+        .to_vec();
+        for r in  &res{
+            let mut test = false;
+            for c in &mut corr {
+                if let Ok(_) = vec_mach_after_rotation(&r, c) {
+                    test = true;
+                }
+                if test {
+                    break;
+                }
+            }
+            assert!(test, "cykle {:?} should not be found", r);
+        }
+        assert!(res.len() == corr.len());
     }
 }
