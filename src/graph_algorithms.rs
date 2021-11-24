@@ -79,19 +79,16 @@ pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> 
             stack.push_back(vec![0 as usize, neighbor])
         }
     }
-
     loop {
         if let Some(current) = stack.pop_back() {
             if let Some(neighbors) = graph.get_neighbors(*current.last()?) {
                 for neighbor in neighbors {
-                    // println!("current: {:?}", current);
-                    if current.contains(&neighbor) {
-                        result.push(current.clone());
+                    if let Some(pos) = current.iter().position(|&r| r == neighbor) {
+                        result.push(current[pos..].to_vec());
                         continue;
                     }
                     let mut new_one = current.clone();
                     new_one.push(neighbor);
-                    // println!("new_one: {:?}", new_one);
                     stack.push_back(new_one);
                 }
             }
