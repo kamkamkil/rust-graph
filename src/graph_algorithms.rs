@@ -64,7 +64,15 @@ pub fn dijkstra<V, N>(
     result.reverse();
     Some((distance[end], result))
 }
-
+/// finds all nodes in given graph 
+/// 
+/// # arguments 
+/// 
+/// * graph - graph in witch you are looking for cycles
+/// 
+/// # return 
+/// 
+/// * if any cycles are found vec of vec of usize that represents nodes if not None
 pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> {
     if graph.is_empty() {
         return None;
