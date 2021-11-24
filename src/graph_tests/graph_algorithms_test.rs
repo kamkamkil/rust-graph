@@ -69,7 +69,7 @@ mod find_all_cycles_test {
         correct: &mut Vec<T>,
     ) -> Result<(), String> {
         if result.len() != correct.len() {
-            return Err("String lengh doesn't match".to_string());
+            return Err("String length doesn't match".to_string());
         }
         for _ in 0..result.len() {
             if correct == result {
