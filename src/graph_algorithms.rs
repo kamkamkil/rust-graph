@@ -66,39 +66,51 @@ pub fn dijkstra<V, N>(
 }
 
 pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> {
-
     if graph.is_empty() {
         return None;
     }
 
     let mut result: Vec<Vec<usize>> = Vec::new();
+    let mut visited = vec![false; graph.get_nodes_amount()];
 
     let mut stack = VecDeque::new();
-    if let Some(neighbors) = graph.get_neighbors(0) {
-        for neighbor in neighbors {
-            stack.push_back(vec![0 as usize, neighbor])
-        }
-    }
-    loop {
-        if let Some(current) = stack.pop_back() {
-            if let Some(neighbors) = graph.get_neighbors(*current.last()?) {
-                for neighbor in neighbors {
-                    if let Some(pos) = current.iter().position(|&r| r == neighbor) {
-                        result.push(current[pos..].to_vec());
-                        continue;
+    while !visited.iter().fold(true, |a, b| a & b) {
+        println!("visited : {:?}",visited);
+        let next = visited.iter().position(|&r| r == false);
+        match next {
+            Some(n) => {
+                visited[n] = true;
+                println!("n = {}",n);
+                if let Some(neighbors) = graph.get_neighbors(n) {
+                    for neighbor in neighbors {
+                        stack.push_back(vec![n, neighbor])
                     }
-                    let mut new_one = current.clone();
-                    new_one.push(neighbor);
-                    stack.push_back(new_one);
                 }
+            },
+            None => break,
+        }
+        loop {
+            if let Some(current) = stack.pop_back() {
+                visited[*current.last()?] = true;
+                if let Some(neighbors) = graph.get_neighbors(*current.last()?) {
+                    for neighbor in neighbors {
+                        if let Some(pos) = current.iter().position(|&r| r == neighbor) {
+                            result.push(current[pos..].to_vec());
+                            continue;
+                        }
+                        let mut new_one = current.clone();
+                        new_one.push(neighbor);
+                        stack.push_back(new_one);
+                    }
+                }
+            } else {
+                break;
             }
-        } else {
-            break;
         }
     }
-    if result.len() > 0{
+    if result.len() > 0 {
         Some(result)
-    }else{
+    } else {
         None
     }
 }
