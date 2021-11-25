@@ -125,10 +125,11 @@ mod find_all_cycles_test {
             vec![1, 2, 3, 4, 5, 6],
             vec![2, 3, 4, 5, 6],
         ];
+
         for r in &res {
             let mut test = false;
             for c in &mut corr {
-                if let Ok(_) = vec_mach_after_rotation(&r, c) {
+                if vec_mach_after_rotation(r, c).is_ok() {
                     test = true;
                 }
                 if test {
