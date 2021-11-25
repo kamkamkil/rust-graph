@@ -167,14 +167,12 @@ pub mod graph {
             if node > self.get_nodes_amount() {
                 return None;
             }
-            let mut result = Vec::new();
 
-            for i in 0..self.get_nodes_amount() {
-                if self.get_ver_value(node, i).is_some() {
-                    result.push(i);
-                }
-            }
-            Some(result)
+            Some(
+                (0..self.get_nodes_amount())
+                    .filter(|&i| self.get_ver_value(node, i).is_some())
+                    .collect(),
+            )
         }
         /// check if there are any nodes in graph
         pub fn is_empty(&self) -> bool {
