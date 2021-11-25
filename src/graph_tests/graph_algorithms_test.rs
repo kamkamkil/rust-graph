@@ -71,13 +71,15 @@ mod find_all_cycles_test {
         if result.len() != correct.len() {
             return Err("String length doesn't match".to_string());
         }
+
         for _ in 0..result.len() {
             if correct == result {
                 return Ok(());
-            } else {
-                correct.rotate_right(1);
             }
+
+            correct.rotate_right(1);
         }
+
         Err("vec Doesn't match".to_string())
     }
     #[test]
