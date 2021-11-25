@@ -1,4 +1,4 @@
-use crate::{grap, graph::Graph};
+use crate::{grap, graph::Graph, graph::GraphError};
 
 #[test]
 fn adding_nodes_works() {
@@ -30,7 +30,7 @@ fn adding_vertices_works() {
     assert_eq!(g.add_ver(2, 3, 4), Ok(()));
     assert_eq!(g.add_ver(9, 1, 9), Ok(()));
     assert_eq!(g.add_ver(4, 5, 1), Ok(()));
-    assert_eq!(g.add_ver(11, 2, 1), Err("node number out of range"));
+    assert_eq!(g.add_ver(11, 2, 1), Err(GraphError::NodeOutOfRange));
 }
 #[test]
 fn removing_nodes_works() {
@@ -39,9 +39,9 @@ fn removing_nodes_works() {
         g.add_node(i);
     }
     assert_eq!(g.get_nodes_amount(), 10);
-    assert_eq!(g.get_node_value(0),Some(&0));
-    assert_eq!(g.delate_node(0), Ok(()));
-    assert_eq!(g.get_node_value(0),Some(&1));
+    assert_eq!(g.get_node_value(0), Some(&0));
+    assert_eq!(g.delete_node(0), Ok(()));
+    assert_eq!(g.get_node_value(0), Some(&1));
 
     assert_eq!(g.get_nodes_amount(), 9);
 }
@@ -56,18 +56,21 @@ fn removing_ver_works() {
             assert_eq!(g.add_ver(i, p, (i * p) as i32), Ok(()));
         }
     }
-    assert_eq!(g.delate_versicles(0, 1), Ok(()));
-    assert_eq!(g.delate_versicles(0, 1), Err("trying to delate non-existing verticle"));
-    assert_eq!(g.get_ver_value(0, 1),&None);
-    assert_eq!(g.delate_versicles(11, 11),Err("node number out of range"));
+    assert_eq!(g.delete_versicles(0, 1), Ok(()));
+    assert_eq!(
+        g.delete_versicles(0, 1),
+        Err(GraphError::RemovingNonExistantNode)
+    );
+    assert_eq!(g.get_ver_value(0, 1), &None);
+    assert_eq!(g.delete_versicles(11, 11), Err(GraphError::NodeOutOfRange));
 }
 
 #[test]
-fn macro_test(){
-    let g : Graph<i32,i32> = grap!(0,1,2,3,4;(0,1,0),(1,2,3));
-    for i in 0..5{
-        assert_eq!(g.get_node_value(i),Some(&(i as i32)));
+fn macro_test() {
+    let g: Graph<i32, i32> = grap!(0,1,2,3,4;(0,1,0),(1,2,3));
+    for i in 0..5 {
+        assert_eq!(g.get_node_value(i), Some(&(i as i32)));
     }
-    assert_eq!(g.get_ver_value(0, 1),&Some(0));
-    assert_eq!(g.get_ver_value(1, 2),&Some(3));
+    assert_eq!(g.get_ver_value(0, 1), &Some(0));
+    assert_eq!(g.get_ver_value(1, 2), &Some(3));
 }

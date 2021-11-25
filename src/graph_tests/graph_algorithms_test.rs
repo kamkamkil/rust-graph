@@ -12,7 +12,7 @@ mod dijkstra_test {
         assert_eq!(g.add_ver(1, 2, 1), Ok(()));
         assert_eq!(g.add_ver(2, 3, 1), Ok(()));
 
-        assert_eq!(dijkstra(&g, 0, 3, |x| *x), Some((3, [0, 1, 2, 3].to_vec())));
+        assert_eq!(dijkstra(&g, 0, 3, |x| *x), Some((3, vec![0, 1, 2, 3])));
     }
     #[test]
     fn no_path() {
@@ -55,7 +55,7 @@ mod dijkstra_test {
 
         assert_eq!(
             dijkstra(&g, 0, 8, |x| *x),
-            Some((5, [0, 1, 5, 6, 7, 8].to_vec()))
+            Some((5, vec![0, 1, 5, 6, 7, 8]))
         );
     }
 }
@@ -71,13 +71,15 @@ mod find_all_cycles_test {
         if result.len() != correct.len() {
             return Err("String length doesn't match".to_string());
         }
+
         for _ in 0..result.len() {
             if correct == result {
                 return Ok(());
-            } else {
-                correct.rotate_right(1);
             }
+
+            correct.rotate_right(1);
         }
+
         Err("vec Doesn't match".to_string())
     }
     #[test]
@@ -91,8 +93,8 @@ mod find_all_cycles_test {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0));
         let res = find_all_cycles(&g);
         match res {
-            Some(r) => assert_eq!(r[0], [0, 1, 2, 3, 4].to_vec()),
-            None => assert!(false, "no path was found but there should be one \n"),
+            Some(r) => assert_eq!(r[0], vec![0, 1, 2, 3, 4]),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
 
@@ -101,8 +103,8 @@ mod find_all_cycles_test {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0),(2,0,0));
         let res = find_all_cycles(&g);
         match res {
-            Some(r) => assert_eq!(r, [[0, 1, 2].to_vec(), [0, 1, 2, 3, 4].to_vec()].to_vec()),
-            None => assert!(false, "no path was found but there should be one \n"),
+            Some(r) => assert_eq!(r, vec![vec![0, 1, 2], vec![0, 1, 2, 3, 4]]),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
     #[test]
@@ -111,23 +113,23 @@ mod find_all_cycles_test {
                                    (0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,5,0),(5,0,0),(6,2,0),(6,0,0),(6,1,0),(4,6,0),(5,6,0),(3,6,0));
         let res = find_all_cycles(&g).unwrap();
         // g.to_dot("file_name.dot");
-        let mut corr: Vec<Vec<usize>> = [
-            [0, 1, 2, 3, 6].to_vec(),
-            [1, 2, 3, 6].to_vec(),
-            [2, 3, 6].to_vec(),
-            [0, 1, 2, 3, 4, 6].to_vec(),
-            [1, 2, 3, 4, 6].to_vec(),
-            [2, 3, 4, 6].to_vec(),
-            [0, 1, 2, 3, 4, 5].to_vec(),
-            [0, 1, 2, 3, 4, 5, 6].to_vec(),
-            [1, 2, 3, 4, 5, 6].to_vec(),
-            [2, 3, 4, 5, 6].to_vec(),
-        ]
-        .to_vec();
+        let mut corr: Vec<Vec<usize>> = vec![
+            vec![0, 1, 2, 3, 6],
+            vec![1, 2, 3, 6],
+            vec![2, 3, 6],
+            vec![0, 1, 2, 3, 4, 6],
+            vec![1, 2, 3, 4, 6],
+            vec![2, 3, 4, 6],
+            vec![0, 1, 2, 3, 4, 5],
+            vec![0, 1, 2, 3, 4, 5, 6],
+            vec![1, 2, 3, 4, 5, 6],
+            vec![2, 3, 4, 5, 6],
+        ];
+
         for r in &res {
             let mut test = false;
             for c in &mut corr {
-                if let Ok(_) = vec_mach_after_rotation(&r, c) {
+                if vec_mach_after_rotation(r, c).is_ok() {
                     test = true;
                 }
                 if test {
@@ -138,14 +140,15 @@ mod find_all_cycles_test {
         }
         assert!(res.len() == corr.len());
     }
+
     #[test]
     fn backtrace_cycle() {
         let g = grap!(0,1,2,3,4;(1,0,0),(1,2,0),(2,3,0),(3,1,0),(0,4,0));
         let res = find_all_cycles(&g);
-        let mut corr: Vec<usize> = [1,2,3].to_vec();
+        let mut corr: Vec<usize> = [1, 2, 3].to_vec();
         match res {
-            Some(r) => assert_eq!(vec_mach_after_rotation(&r[0],&mut corr),Ok(())),
-            None => assert!(false, "no path was found but there should be one \n"),
+            Some(r) => assert_eq!(vec_mach_after_rotation(&r[0], &mut corr), Ok(())),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
 }

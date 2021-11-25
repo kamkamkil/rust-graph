@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 #![allow(dead_code)]
 pub mod graph {
     //! implementation of graph data struct based on association matrix
@@ -82,17 +83,21 @@ pub mod graph {
         ///
         /// * Err("node number out of range") if any node is out of range
         ///
-        pub fn add_ver(&mut self, node1: usize, node2: usize, data: V) -> Result<(), &str> {
-            if node1 < self.nodes.len() && node2 < self.nodes.len() {
-                self.versicles_amount += 1;
-                self.versicles[node1][node2] = Some(data);
-                Ok(())
-            } else {
-                Err("node number out of range")
-            }
+        pub fn add_ver(&mut self, node1: usize, node2: usize, data: V) -> Result<(), GraphError> {
+            let versicles = &mut self.versicles;
+            let versicles_amt = &mut self.versicles_amount;
+
+            versicles
+                .get_mut(node1)
+                .and_then(|inner| inner.get_mut(node2))
+                .map_or(Err(GraphError::NodeOutOfRange), |node| {
+                    *versicles_amt += 1;
+                    *node = Some(data);
+                    Ok(())
+                })
         }
 
-        /// delate node and all versicles going in and out of it
+        /// delete node and all versicles going in and out of it
         ///
         /// # arguments
         ///
@@ -103,9 +108,9 @@ pub mod graph {
         /// * OK(()) if everything is fine
         ///
         /// * Err("node number out of range") if any node is out of range
-        pub fn delate_node(&mut self, node: usize) -> Result<(), &str> {
+        pub fn delete_node(&mut self, node: usize) -> Result<(), GraphError> {
             if node > self.nodes.len() {
-                Err("node number out of range")
+                Err(GraphError::NodeOutOfRange)
             } else {
                 self.nodes.remove(node);
                 self.versicles.remove(node);
@@ -116,7 +121,7 @@ pub mod graph {
             }
         }
 
-        /// delate versicle
+        /// delete versicle
         ///
         /// # arguments
         ///
@@ -128,19 +133,15 @@ pub mod graph {
         ///
         /// * Err("node number out of range") if any node is out of range
         ///
-        /// * Err("trying to delate non-existing verticle") if non existing versicles is being deleted
-        pub fn delate_versicles(&mut self, node1: usize, node2: usize) -> Result<(), &str> {
-            if node1 < self.nodes.len() && node2 < self.nodes.len() {
-                match self.versicles[node1][node2] {
-                    None => Err("trying to delate non-existing verticle"),
-                    _ => {
-                        self.versicles[node1][node2] = None;
-                        Ok(())
-                    }
-                }
-            } else {
-                Err("node number out of range")
-            }
+        /// * Err("trying to delete non-existing verticle") if non existing versicles is being deleted
+        pub fn delete_versicles(&mut self, node1: usize, node2: usize) -> Result<(), GraphError> {
+            self.versicles
+                .get_mut(node1)
+                .and_then(|node_vec| node_vec.get_mut(node2))
+                .map_or(Err(GraphError::NodeOutOfRange), |node| match node.take() {
+                    Some(_) => Ok(()),
+                    None => Err(GraphError::RemovingNonExistantNode),
+                })
         }
 
         /// returns amount of nodes
@@ -152,21 +153,17 @@ pub mod graph {
         pub fn get_versicles_amount(&self) -> usize {
             self.versicles_amount
         }
+
         pub fn get_ver_value(&self, n1: usize, n2: usize) -> &Option<V> {
-            if n1 < self.nodes.len() && n2 < self.nodes.len() {
-                &self.versicles[n1][n2]
-            } else {
-                &None
-            }
+            self.versicles
+                .get(n1)
+                .and_then(|inner_vec| inner_vec.get(n2))
+                .unwrap_or(&None)
         }
 
         /// return value of passed code
         pub fn get_node_value(&self, node: usize) -> Option<&N> {
-            if node < self.nodes.len() {
-                Some(&self.nodes[node])
-            } else {
-                None
-            }
+            self.nodes.get(node)
         }
 
         /// return vector of nodes which are neighbors of given node
@@ -174,18 +171,16 @@ pub mod graph {
             if node > self.get_nodes_amount() {
                 return None;
             }
-            let mut result = Vec::new();
 
-            for i in 0..self.get_nodes_amount() {
-                if self.get_ver_value(node, i).is_some() {
-                    result.push(i);
-                }
-            }
-            Some(result)
+            Some(
+                (0..self.get_nodes_amount())
+                    .filter(|&i| self.get_ver_value(node, i).is_some())
+                    .collect(),
+            )
         }
         /// check if there are any nodes in graph
         pub fn is_empty(&self) -> bool {
-            self.get_nodes_amount() == 0
+            self.nodes.is_empty()
         }
 
         pub fn new() -> Self {
@@ -206,6 +201,13 @@ pub mod graph {
             graph_iterators::DFSIter::new(self, node)
         }
     }
+
+    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    pub enum GraphError {
+        NodeOutOfRange,
+        RemovingNonExistantNode,
+    }
+
     pub mod to_dot;
 }
 

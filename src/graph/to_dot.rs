@@ -19,7 +19,7 @@ impl Display for Color {
             Color::Red => write!(f, "red"),
             Color::Blue => write!(f, "blue"),
             Color::Black => write!(f, "black"),
-            Color::RGB(r, g, b) => write!(f, "#{:X}{:X}{:X}",r,g,b),
+            Color::RGB(r, g, b) => write!(f, "#{:X}{:X}{:X}", r, g, b),
         }
     }
 }
@@ -170,14 +170,14 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
         versicle_rule: impl Fn(usize, usize) -> VersicleRule,
     ) -> std::io::Result<()> {
         let mut file = File::create(file_name)?;
-        write!(file,"digraph g{{ \n")?;
+        writeln!(file, "digraph g{{ ")?;
 
         self.format_node(node_rule, &mut file)?;
 
         for node in 0..self.get_nodes_amount() {
             for n in self.get_neighbors(node).unwrap() {
                 let rule = versicle_rule(node, n);
-                write!(file,"{} -> {} [", node, n)?;
+                write!(file, "{} -> {} [", node, n)?;
                 if rule.label {
                     write!(
                         file,
@@ -186,10 +186,10 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
                     )?;
                 }
                 write!(file, "color = {} ", rule.color)?;
-                write!(file, "arrowhead = {} ]\n", rule.style)?;
+                writeln!(file, "arrowhead = {} ]", rule.style)?;
             }
         }
-        write!(file, "}}\n")?;
+        writeln!(file, "}}")?;
         Ok(())
     }
 
@@ -209,7 +209,7 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
             }
             write!(file, "shape = {},", rule.shape)?;
             write!(file, "fillcolor = {}, style = filled", rule.fill_color)?;
-            write!(file, "]\n")?;
+            writeln!(file, "]")?;
         }
         Ok(())
     }

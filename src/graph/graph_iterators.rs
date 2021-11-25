@@ -44,8 +44,7 @@ impl<'a, V, N> Iterator for BFSIter<'a, V, N> {
     }
 }
 
-impl<'a, V: Clone, N> GetNodeNumber for BFSIter<'a, V, N>
-{
+impl<'a, V: Clone, N> GetNodeNumber for BFSIter<'a, V, N> {
     fn get_node_number(&self) -> Option<&usize> {
         self.queue.back()
     }
@@ -60,7 +59,7 @@ impl<'a, V, N> DFSIter<'a, V, N> {
     pub fn new(graph: &'a Graph<V, N>, start: usize) -> Self {
         let mut new_one = Self {
             graph,
-            stack : VecDeque::new(),
+            stack: VecDeque::new(),
             unvisited: vec![true; graph.get_nodes_amount()],
         };
         new_one.stack.push_back(start);
@@ -87,8 +86,7 @@ impl<'a, V, N> Iterator for DFSIter<'a, V, N> {
     }
 }
 
-impl<'a, V: Clone, N> GetNodeNumber for DFSIter<'a, V, N>
-{
+impl<'a, V: Clone, N> GetNodeNumber for DFSIter<'a, V, N> {
     fn get_node_number(&self) -> Option<&usize> {
         self.stack.front()
     }
