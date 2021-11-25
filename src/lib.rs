@@ -176,7 +176,7 @@ pub mod graph {
         }
         /// check if there are any nodes in graph
         pub fn is_empty(&self) -> bool {
-            self.get_nodes_amount() == 0
+            self.nodes.is_empty()
         }
 
         pub fn new() -> Self {
