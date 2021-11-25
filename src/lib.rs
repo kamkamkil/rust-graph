@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 #![allow(dead_code)]
 pub mod graph {
     //! implementation of graph data struct based on association matrix
