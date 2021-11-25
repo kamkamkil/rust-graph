@@ -19,7 +19,7 @@ impl Display for Color {
             Color::Red => write!(f, "red"),
             Color::Blue => write!(f, "blue"),
             Color::Black => write!(f, "black"),
-            Color::RGB(r, g, b) => write!(f, "black"),
+            Color::RGB(r, g, b) => write!(f, "#{:X}{:X}{:X}",r,g,b),
         }
     }
 }
