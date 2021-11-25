@@ -40,8 +40,8 @@ fn removing_nodes_works() {
     }
     assert_eq!(g.get_nodes_amount(), 10);
     assert_eq!(g.get_node_value(0),Some(&0));
-    assert_eq!(g.delate_node(0), Ok(()));
     assert_eq!(g.get_node_value(0),Some(&1));
+    assert_eq!(g.delete_node(0), Ok(()));
 
     assert_eq!(g.get_nodes_amount(), 9);
 }

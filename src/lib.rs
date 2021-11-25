@@ -117,7 +117,7 @@ pub mod graph {
             }
         }
 
-        /// delate versicle
+        /// delete versicle
         ///
         /// # arguments
         ///
