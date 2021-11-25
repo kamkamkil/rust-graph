@@ -86,11 +86,14 @@ pub mod graph {
             let versicles = &mut self.versicles;
             let versicles_amt = &mut self.versicles_amount;
 
-            versicles.get_mut(node1).and_then(|inner| inner.get_mut(node2)).map_or(Err(GraphError::NodeOutOfRange), |node| {
-                *versicles_amt += 1;
-                *node = Some(data);
-                Ok(())
-            })
+            versicles
+                .get_mut(node1)
+                .and_then(|inner| inner.get_mut(node2))
+                .map_or(Err(GraphError::NodeOutOfRange), |node| {
+                    *versicles_amt += 1;
+                    *node = Some(data);
+                    Ok(())
+                })
         }
 
         /// delete node and all versicles going in and out of it
@@ -131,10 +134,10 @@ pub mod graph {
         ///
         /// * Err("trying to delete non-existing verticle") if non existing versicles is being deleted
         pub fn delete_versicles(&mut self, node1: usize, node2: usize) -> Result<(), GraphError> {
-            self
-                .versicles
+            self.versicles
                 .get_mut(node1)
-                .and_then(|node_vec| node_vec.get_mut(node2)).map_or(Err(GraphError::NodeOutOfRange), |node| match node.take() {
+                .and_then(|node_vec| node_vec.get_mut(node2))
+                .map_or(Err(GraphError::NodeOutOfRange), |node| match node.take() {
                     Some(_) => Ok(()),
                     None => Err(GraphError::RemovingNonExistantNode),
                 })

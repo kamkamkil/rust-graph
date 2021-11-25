@@ -146,7 +146,7 @@ mod find_all_cycles_test {
         let res = find_all_cycles(&g);
         let mut corr: Vec<usize> = [1,2,3].to_vec();
         match res {
-            Some(r) => assert_eq!(vec_mach_after_rotation(&r[0],&mut corr),Ok(())),
+            Some(r) => assert_eq!(vec_mach_after_rotation(&r[0], &mut corr), Ok(())),
             None => assert!(false, "no path was found but there should be one \n"),
         }
     }

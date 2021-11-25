@@ -59,7 +59,7 @@ pub fn dijkstra<V, N>(
     while current != start {
         let node = prev[current]?;
         result.push(node);
-        current = node
+        current = node;
     }
     result.reverse();
     Some((distance[end], result))
@@ -92,7 +92,7 @@ pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> 
                 println!("n = {}", n);
                 if let Some(neighbors) = graph.get_neighbors(n) {
                     for neighbor in neighbors {
-                        stack.push_back(vec![n, neighbor])
+                        stack.push_back(vec![n, neighbor]);
                     }
                 }
             }

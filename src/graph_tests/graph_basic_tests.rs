@@ -39,9 +39,9 @@ fn removing_nodes_works() {
         g.add_node(i);
     }
     assert_eq!(g.get_nodes_amount(), 10);
-    assert_eq!(g.get_node_value(0),Some(&0));
-    assert_eq!(g.get_node_value(0),Some(&1));
+    assert_eq!(g.get_node_value(0), Some(&0));
     assert_eq!(g.delete_node(0), Ok(()));
+    assert_eq!(g.get_node_value(0), Some(&1));
 
     assert_eq!(g.get_nodes_amount(), 9);
 }
@@ -66,11 +66,11 @@ fn removing_ver_works() {
 }
 
 #[test]
-fn macro_test(){
-    let g : Graph<i32,i32> = grap!(0,1,2,3,4;(0,1,0),(1,2,3));
-    for i in 0..5{
-        assert_eq!(g.get_node_value(i),Some(&(i as i32)));
+fn macro_test() {
+    let g: Graph<i32, i32> = grap!(0,1,2,3,4;(0,1,0),(1,2,3));
+    for i in 0..5 {
+        assert_eq!(g.get_node_value(i), Some(&(i as i32)));
     }
-    assert_eq!(g.get_ver_value(0, 1),&Some(0));
-    assert_eq!(g.get_ver_value(1, 2),&Some(3));
+    assert_eq!(g.get_ver_value(0, 1), &Some(0));
+    assert_eq!(g.get_ver_value(1, 2), &Some(3));
 }
