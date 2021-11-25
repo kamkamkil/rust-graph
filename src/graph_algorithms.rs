@@ -113,9 +113,10 @@ pub fn find_all_cycles<V, N>(graph: &g::Graph<V, N>) -> Option<Vec<Vec<usize>>> 
             }
         }
     }
-    if !result.is_empty() {
-        Some(result)
-    } else {
+
+    if result.is_empty() {
         None
+    } else {
+        Some(result)
     }
 }
