@@ -1,4 +1,4 @@
-use crate::{grap, graph::Graph};
+use crate::{grap, graph::Graph, graph::GraphError};
 
 #[test]
 fn adding_nodes_works() {
@@ -30,7 +30,7 @@ fn adding_vertices_works() {
     assert_eq!(g.add_ver(2, 3, 4), Ok(()));
     assert_eq!(g.add_ver(9, 1, 9), Ok(()));
     assert_eq!(g.add_ver(4, 5, 1), Ok(()));
-    assert_eq!(g.add_ver(11, 2, 1), Err("node number out of range"));
+    assert_eq!(g.add_ver(11, 2, 1), Err(GraphError::NodeOutOfRange));
 }
 #[test]
 fn removing_nodes_works() {
@@ -56,10 +56,13 @@ fn removing_ver_works() {
             assert_eq!(g.add_ver(i, p, (i * p) as i32), Ok(()));
         }
     }
-    assert_eq!(g.delate_versicles(0, 1), Ok(()));
-    assert_eq!(g.delate_versicles(0, 1), Err("trying to delate non-existing verticle"));
-    assert_eq!(g.get_ver_value(0, 1),&None);
-    assert_eq!(g.delate_versicles(11, 11),Err("node number out of range"));
+    assert_eq!(g.delete_versicles(0, 1), Ok(()));
+    assert_eq!(
+        g.delete_versicles(0, 1),
+        Err(GraphError::RemovingNonExistantNode)
+    );
+    assert_eq!(g.get_ver_value(0, 1), &None);
+    assert_eq!(g.delete_versicles(11, 11), Err(GraphError::NodeOutOfRange));
 }
 
 #[test]

@@ -103,9 +103,9 @@ pub mod graph {
         /// * OK(()) if everything is fine
         ///
         /// * Err("node number out of range") if any node is out of range
-        pub fn delate_node(&mut self, node: usize) -> Result<(), &str> {
+        pub fn delete_node(&mut self, node: usize) -> Result<(), GraphError> {
             if node > self.nodes.len() {
-                Err("node number out of range")
+                Err(GraphError::NodeOutOfRange)
             } else {
                 self.nodes.remove(node);
                 self.versicles.remove(node);
@@ -206,6 +206,13 @@ pub mod graph {
             graph_iterators::DFSIter::new(self, node)
         }
     }
+
+    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    pub enum GraphError {
+        NodeOutOfRange,
+        RemovingNonExistantNode,
+    }
+
     pub mod to_dot;
 }
 
