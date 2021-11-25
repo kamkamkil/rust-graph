@@ -93,8 +93,8 @@ mod find_all_cycles_test {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0));
         let res = find_all_cycles(&g);
         match res {
-            Some(r) => assert_eq!(r[0], [0, 1, 2, 3, 4].to_vec()),
-            None => assert!(false, "no path was found but there should be one \n"),
+            Some(r) => assert_eq!(r[0], vec![0, 1, 2, 3, 4]),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
 
@@ -103,8 +103,8 @@ mod find_all_cycles_test {
         let g = grap!(0,1,2,3,4;(0,1,0),(1,2,0),(2,3,0),(3,4,0),(4,0,0),(2,0,0));
         let res = find_all_cycles(&g);
         match res {
-            Some(r) => assert_eq!(r, [[0, 1, 2].to_vec(), [0, 1, 2, 3, 4].to_vec()].to_vec()),
-            None => assert!(false, "no path was found but there should be one \n"),
+            Some(r) => assert_eq!(r, vec![vec![0, 1, 2], vec![0, 1, 2, 3, 4]]),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
     #[test]
@@ -140,6 +140,7 @@ mod find_all_cycles_test {
         }
         assert!(res.len() == corr.len());
     }
+
     #[test]
     fn backtrace_cycle() {
         let g = grap!(0,1,2,3,4;(1,0,0),(1,2,0),(2,3,0),(3,1,0),(0,4,0));
@@ -147,7 +148,7 @@ mod find_all_cycles_test {
         let mut corr: Vec<usize> = [1, 2, 3].to_vec();
         match res {
             Some(r) => assert_eq!(vec_mach_after_rotation(&r[0], &mut corr), Ok(())),
-            None => assert!(false, "no path was found but there should be one \n"),
+            None => panic!("no path was found but there should be one \n"),
         }
     }
 }
