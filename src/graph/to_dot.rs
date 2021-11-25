@@ -197,7 +197,7 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
         node_rule: impl Fn(usize) -> NodeRule,
         file: &mut File,
     ) -> Result<(), std::io::Error> {
-        Ok(for node in 0..self.get_nodes_amount() {
+        for node in 0..self.get_nodes_amount() {
             let rule = node_rule(node);
             file.write_all(format!("{} [", node).as_bytes())?;
             file.write_all(format!("color = {} ,", rule.color).as_bytes())?;
@@ -208,7 +208,8 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
             }
             file.write_all(format!("shape = {},", rule.shape).as_bytes())?;
             file.write_all(format!("fillcolor = {}, style = filled", rule.fill_color).as_bytes())?;
-            file.write_all(format!("]\n").as_bytes())?;
-        })
+            file.write_all("]\n".to_string().as_bytes())?;
+        };
+        Ok(())
     }
 }
