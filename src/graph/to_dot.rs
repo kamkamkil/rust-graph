@@ -19,7 +19,7 @@ impl Display for Color {
             Color::Red => write!(f, "red"),
             Color::Blue => write!(f, "blue"),
             Color::Black => write!(f, "black"),
-            Color::RGB(_, _, _) => todo!(),
+            Color::RGB(r, g, b) => write!(f, "black"),
         }
     }
 }
@@ -170,25 +170,26 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
         versicle_rule: impl Fn(usize, usize) -> VersicleRule,
     ) -> std::io::Result<()> {
         let mut file = File::create(file_name)?;
-        file.write_all(b"digraph g{ \n")?;
+        write!(file,"digraph g{{ \n")?;
 
         self.format_node(node_rule, &mut file)?;
 
         for node in 0..self.get_nodes_amount() {
             for n in self.get_neighbors(node).unwrap() {
                 let rule = versicle_rule(node, n);
-                file.write_all(format!("{} -> {} [", node, n,).as_bytes())?;
+                write!(file,"{} -> {} [", node, n)?;
                 if rule.label {
-                    file.write_all(
-                        format!("label = {} ", self.get_ver_value(node, n).as_ref().unwrap())
-                            .as_bytes(),
+                    write!(
+                        file,
+                        "label = {} ",
+                        self.get_ver_value(node, n).as_ref().unwrap()
                     )?;
                 }
-                file.write_all(format!("color = {} ", rule.color).as_bytes())?;
-                file.write_all(format!("arrowhead = {} ]\n", rule.style).as_bytes())?;
+                write!(file, "color = {} ", rule.color)?;
+                write!(file, "arrowhead = {} ]\n", rule.style)?;
             }
         }
-        file.write_all(b"}\n")?;
+        write!(file, "}}\n")?;
         Ok(())
     }
 
@@ -199,17 +200,17 @@ impl<V: Display + Clone, N: Display> Graph<V, N> {
     ) -> Result<(), std::io::Error> {
         for node in 0..self.get_nodes_amount() {
             let rule = node_rule(node);
-            file.write_all(format!("{} [", node).as_bytes())?;
-            file.write_all(format!("color = {} ,", rule.color).as_bytes())?;
+            write!(file, "{} [", node)?;
+            write!(file, "color = {} ,", rule.color)?;
             if rule.label {
                 file.write_all(
                     format!("label = {} ,", self.get_node_value(node).as_ref().unwrap()).as_bytes(),
                 )?;
             }
-            file.write_all(format!("shape = {},", rule.shape).as_bytes())?;
-            file.write_all(format!("fillcolor = {}, style = filled", rule.fill_color).as_bytes())?;
-            file.write_all("]\n".to_string().as_bytes())?;
-        };
+            write!(file, "shape = {},", rule.shape)?;
+            write!(file, "fillcolor = {}, style = filled", rule.fill_color)?;
+            write!(file, "]\n")?;
+        }
         Ok(())
     }
 }
